@@ -25,7 +25,7 @@ public class DiscardServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        // close the connection when a exception is raised
+        // close the connection when an exception is raised
         cause.printStackTrace();
         ctx.close();
     }
