@@ -22,19 +22,29 @@ public class DiscardServer {
     }
 
     public void run() throws Exception {
+        // NioEventLoopGroup is a multi-threaded event loop that handles IO operation
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         NioEventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
+            // ServerBootstrap is a helper class that sets up a server,
+            // but you can still use a Channel directly, which is a tedious process
             ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workerGroup)
+                    // NioServerSocketChannel class which is used
+                    // to instantiate a new Channel to accept incoming connections
                     .channel(NioServerSocketChannel.class)
-                    .childHandler(new ChannelInitializer<SocketChannel>() {
-                        @Override
-                        protected void initChannel(SocketChannel ch) throws Exception {
-                            ch.pipeline().addLast(new DiscardServerHandler());
-                        }
-                    })
+                    .childHandler(
+                            // ChannelInitializer is for helping customize channel pipeline
+                            new ChannelInitializer<SocketChannel>() {
+                                @Override
+                                protected void initChannel(SocketChannel ch) {
+                                    // Official recommendation -> always create new Handler instance
+                                    ch.pipeline().addLast(new DiscardServerHandler());
+                                }
+                            })
+                    // optionals by using tcp
                     .option(ChannelOption.SO_BACKLOG, 128)
+                    // child options are accepted by the parent ServerChannel -> NioSocketChannel in this case
                     .childOption(ChannelOption.SO_KEEPALIVE, true);
 
             // bind and start to accept incoming connections
