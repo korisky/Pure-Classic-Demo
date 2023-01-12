@@ -25,6 +25,7 @@ public class DiscardServerHandler extends ChannelInboundHandlerAdapter {
         ByteBuf in = (ByteBuf) msg;
         try {
             while (in.isReadable()) {
+                // just print what we read in char
                 System.out.print((char) in.readByte());
                 System.out.flush();
             }
