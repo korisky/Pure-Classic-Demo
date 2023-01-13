@@ -20,28 +20,40 @@ import java.lang.reflect.Proxy;
 @Component
 public class SpringAnnotPostProcessor implements BeanPostProcessor {
 
+    /**
+     * For CgLib before / after bean initialization is all good, but could not use twice
+     */
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-        if (bean.getClass().isAnnotationPresent(CgLibLog.class)
-                || bean.getClass().getSuperclass().isAnnotationPresent(CgLibLog.class)) {
-            // cglib enhancer
+
+        // cglib enhancer -> Method Interceptor
+        if (bean.getClass().isAnnotationPresent(CgLibLog.class) || bean.getClass().getSuperclass().isAnnotationPresent(CgLibLog.class)) {
             Enhancer enhancer = new Enhancer();
             enhancer.setSuperclass(bean.getClass());
             enhancer.setCallback(new LogProxyCgLib());
             return enhancer.create();
         }
+
+        // jdk Invocation Handler
+//        if (bean.getClass().isAnnotationPresent(JdkLog.class) || bean.getClass().getSuperclass().isAnnotationPresent(JdkLog.class)) {
+//            return Proxy.newProxyInstance(bean.getClass().getClassLoader(), bean.getClass().getInterfaces(), new LogProxyJdk(bean));
+//        }
+
         return bean;
     }
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-        // must take care super class cause Spring might use Cglib to proxy instances
-        if (bean.getClass().isAnnotationPresent(JdkLog.class) || bean.getClass().getSuperclass().isAnnotationPresent(JdkLog.class)) {
-            // jdk enhancer
-            System.out.println("Proxy");
-            return Proxy.newProxyInstance(bean.getClass().getClassLoader(), bean.getClass().getInterfaces(), new LogProxyJdk(bean));
-        }
+
+        // cglib enhancer -> Method Interceptor
+//        if (bean.getClass().isAnnotationPresent(CgLibLog.class) || bean.getClass().getSuperclass().isAnnotationPresent(CgLibLog.class)) {
+//            Enhancer enhancer = new Enhancer();
+//            enhancer.setSuperclass(bean.getClass());
+//            enhancer.setCallback(new LogProxyCgLib());
+//            return enhancer.create();
+//        }
+
         return bean;
     }
 }
