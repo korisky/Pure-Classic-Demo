@@ -1,6 +1,7 @@
 package com.own.spring.demo.spring;
 
-import com.own.spring.demo.anno.RoundingLog;
+import com.own.spring.demo.anno.CgLibLog;
+import com.own.spring.demo.anno.JdkLog;
 import com.own.spring.demo.proxy.LogProxyCgLib;
 import com.own.spring.demo.proxy.LogProxyJdk;
 import org.springframework.beans.BeansException;
@@ -22,9 +23,8 @@ public class SpringAnnotPostProcessor implements BeanPostProcessor {
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-        // take care of rounding log
-        if (bean.getClass().isAnnotationPresent(RoundingLog.class)
-                || bean.getClass().getSuperclass().isAnnotationPresent(RoundingLog.class)) {
+        if (bean.getClass().isAnnotationPresent(CgLibLog.class)
+                || bean.getClass().getSuperclass().isAnnotationPresent(CgLibLog.class)) {
             // cglib enhancer
             Enhancer enhancer = new Enhancer();
             enhancer.setSuperclass(bean.getClass());
@@ -36,16 +36,12 @@ public class SpringAnnotPostProcessor implements BeanPostProcessor {
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-        // take care of rounding log
-//        if (bean.getClass().getSimpleName().contains("InteractionController") || bean.getClass().getSimpleName().contains("interactionController")) {
-//            System.out.println();
-//        }
-//        // must take care super class cause Spring might use Cglib to proxy instances
-//        if (bean.getClass().isAnnotationPresent(RoundingLog.class) || bean.getClass().getSuperclass().isAnnotationPresent(RoundingLog.class)) {
-//            // jdk enhancer
-//            System.out.println("Proxy");
-//            return Proxy.newProxyInstance(bean.getClass().getClassLoader(), bean.getClass().getInterfaces(), new LogProxyJdk(bean));
-//        }
+        // must take care super class cause Spring might use Cglib to proxy instances
+        if (bean.getClass().isAnnotationPresent(JdkLog.class) || bean.getClass().getSuperclass().isAnnotationPresent(JdkLog.class)) {
+            // jdk enhancer
+            System.out.println("Proxy");
+            return Proxy.newProxyInstance(bean.getClass().getClassLoader(), bean.getClass().getInterfaces(), new LogProxyJdk(bean));
+        }
         return bean;
     }
 }
