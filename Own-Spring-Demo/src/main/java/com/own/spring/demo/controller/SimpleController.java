@@ -1,9 +1,9 @@
 package com.own.spring.demo.controller;
 
+import com.own.spring.demo.anno.RoundingLog;
+import com.own.spring.demo.param.InputParam;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author Roylic
@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequestMapping("/simple")
+@RoundingLog
 public class SimpleController {
 
 
-    @GetMapping("/get")
-    public String getMapping(String input) {
-        log.info("In SimpleController, with input:{}", input);
-        return input.concat(" hahahaha");
+    @PostMapping("/post")
+    public String getMapping(@RequestBody InputParam input) {
+        return "yeah";
     }
 
 }

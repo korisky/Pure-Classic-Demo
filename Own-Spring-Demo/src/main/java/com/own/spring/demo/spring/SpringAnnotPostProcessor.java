@@ -22,8 +22,9 @@ public class SpringAnnotPostProcessor implements BeanPostProcessor {
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-//        // take care of rounding log
-        if (bean.getClass().isAnnotationPresent(RoundingLog.class)) {
+        // take care of rounding log
+        if (bean.getClass().isAnnotationPresent(RoundingLog.class)
+                || bean.getClass().getSuperclass().isAnnotationPresent(RoundingLog.class)) {
             // cglib enhancer
             Enhancer enhancer = new Enhancer();
             enhancer.setSuperclass(bean.getClass());
@@ -36,15 +37,15 @@ public class SpringAnnotPostProcessor implements BeanPostProcessor {
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         // take care of rounding log
-        if (bean.getClass().getSimpleName().contains("InteractionController") || bean.getClass().getSimpleName().contains("interactionController")) {
-            System.out.println();
-        }
-        // must take care super class cause Spring might use Cglib to proxy instances
-        if (bean.getClass().isAnnotationPresent(RoundingLog.class) || bean.getClass().getSuperclass().isAnnotationPresent(RoundingLog.class)) {
-            // jdk enhancer
-            System.out.println("Proxy");
-            return Proxy.newProxyInstance(bean.getClass().getClassLoader(), bean.getClass().getInterfaces(), new LogProxyJdk(bean));
-        }
+//        if (bean.getClass().getSimpleName().contains("InteractionController") || bean.getClass().getSimpleName().contains("interactionController")) {
+//            System.out.println();
+//        }
+//        // must take care super class cause Spring might use Cglib to proxy instances
+//        if (bean.getClass().isAnnotationPresent(RoundingLog.class) || bean.getClass().getSuperclass().isAnnotationPresent(RoundingLog.class)) {
+//            // jdk enhancer
+//            System.out.println("Proxy");
+//            return Proxy.newProxyInstance(bean.getClass().getClassLoader(), bean.getClass().getInterfaces(), new LogProxyJdk(bean));
+//        }
         return bean;
     }
 }

@@ -31,7 +31,7 @@ public class LogProxyCgLib implements MethodInterceptor {
             if (proxiedClassName.contains("controller") || proxiedClassName.contains("Controller")) {
                 loggingArgs = params[0];
             }
-            log.debug("[Proxy_{}] input on [{}] with params:[{}]", proxiedClassName, method.getName(), JSONObject.toJSONString(loggingArgs));
+            log.info("[Proxy_{}] input on [{}] with params:[{}]", proxiedClassName, method.getName(), JSONObject.toJSONString(loggingArgs));
         }
     }
 
