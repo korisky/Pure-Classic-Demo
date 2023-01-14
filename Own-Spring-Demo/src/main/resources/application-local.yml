@@ -1,3 +1,18 @@
+server:
+  port: 8088
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: demo-spring
+  main:
+    allow-bean-definition-overriding: true
+  profiles:
+    active: local
+  aop:
+    proxy-target-class: false
+
 management:
   endpoints:
     web:
