@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequestMapping("/simple")
-//@CgLibLog
-@JdkLog
-public class SimpleController implements JdkProxyInterface {
+@CgLibLog
+//@JdkLog
+public class SimpleController extends BaseController implements JdkProxyInterface {
 
 
     @PostMapping("/post")
     public String getMapping(@RequestBody InputParam input) {
-        return input.getName() + " yeah";
+        return baseStuff("simple") + input.getName() + " yeah";
     }
 
 }
