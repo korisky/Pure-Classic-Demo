@@ -1,6 +1,7 @@
 package com.own.spring.demo.config;
 
 import com.own.spring.demo.controller.BaseController;
+import com.own.spring.demo.controller.SimpleController;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +17,12 @@ import javax.annotation.PostConstruct;
 public class TestConfig {
 
     @Autowired
-    private BaseController baseController;
+    private SimpleController simpleController;
 
     private String configName;
 
     @PostConstruct
     public void postConstruct() {
-        baseController.setCONFIG(configName);
+        simpleController.setCONFIG(configName);
     }
 }
