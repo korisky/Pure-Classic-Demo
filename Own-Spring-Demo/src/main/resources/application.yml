@@ -1,0 +1,17 @@
+server:
+  port: 8088
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: demo-spring
+  main:
+    allow-bean-definition-overriding: true
+
+test:
+  config-name: "Just a config"
+
+
+
+
