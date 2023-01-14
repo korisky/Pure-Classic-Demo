@@ -17,6 +17,7 @@ import java.lang.reflect.Proxy;
  *
  * CgLib Proxy -> if target class or it's super class do not contain non-arg constructor,
  * CgLib Proxy would throw error
+ * https://blog.csdn.net/baidu_28610773/article/details/82926075
  * Reason: CgLib采用的字节码技术, 需要生成被代理类的子类, 再织入逻辑. 但字节码技术与Spring容器处于不同维度
  *      (字节码在JVM层面), 生成代理时无法通过Spring自动注入, 所以没有空Constructor时会导致直接无法启动
  *

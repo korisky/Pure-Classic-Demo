@@ -25,6 +25,11 @@ public class LogProxyCgLib implements MethodInterceptor {
     }
 
     private void beforeLogging(String simpleEnhancedClassName, Method method, Object[] params) {
+        // not care of void methods
+        if (null == params || params.length == 0) {
+            return;
+        }
+        // only care public
         if (method.getModifiers() == 1) {
             Object loggingArgs = params;
             String proxiedClassName = simpleEnhancedClassName.split("\\$\\$")[0];
