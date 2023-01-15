@@ -32,16 +32,16 @@ public class SpringAnnotBeanFactoryPostProcessor implements BeanClassLoaderAware
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
         // Bean实例化前, 对所有BeanDefinition进行遍历
-        for (String bdName : beanFactory.getBeanDefinitionNames()) {
-            BeanDefinition beanDefinition = beanFactory.getBeanDefinition(bdName);
-            String className = beanDefinition.getBeanClassName();
-            if (null != className) {
-                Class<?> aClass = ClassUtils.resolveClassName(className, this.classLoader);
-                if (aClass.isAnnotationPresent(JdkLog.class)) {
-                    System.out.println();
-                }
-            }
-        }
+//        for (String bdName : beanFactory.getBeanDefinitionNames()) {
+//            BeanDefinition beanDefinition = beanFactory.getBeanDefinition(bdName);
+//            String className = beanDefinition.getBeanClassName();
+//            if (null != className) {
+//                Class<?> aClass = ClassUtils.resolveClassName(className, this.classLoader);
+//                if (aClass.isAnnotationPresent(JdkLog.class)) {
+//                    System.out.println();
+//                }
+//            }
+//        }
 //        // 对Map找到的Field进行遍历, 将所有已经被Proxy的BeanDefinition的都register到registry上
 //        BeanDefinitionRegistry registry = (BeanDefinitionRegistry) beanFactory;
 //        this.rpcRefBeanDefinition.forEach((name, definition) -> {
