@@ -19,7 +19,7 @@ import java.lang.annotation.Annotation;
  * 2023/1/13
  */
 @Component
-public class ReferenceRegistryPostProcessor implements BeanDefinitionRegistryPostProcessor, InitializingBean,
+public class BeanDefinitionLogRegistryPostProcessor implements BeanDefinitionRegistryPostProcessor, InitializingBean,
         ApplicationContextAware, BeanNameAware {
 
     private String basePackage;

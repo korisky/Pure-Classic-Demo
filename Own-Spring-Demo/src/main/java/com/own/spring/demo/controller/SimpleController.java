@@ -2,7 +2,10 @@ package com.own.spring.demo.controller;
 
 import com.own.spring.demo.anno.CgLibLog;
 import com.own.spring.demo.param.InputParam;
+import com.own.spring.demo.service.SayHello;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -16,6 +19,9 @@ import org.springframework.web.bind.annotation.*;
 //@JdkLog
 public class SimpleController extends BaseController {
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
 
 //    public SimpleController(TestConfig testConfig) {
 //        super(testConfig);
@@ -24,6 +30,12 @@ public class SimpleController extends BaseController {
     @PostMapping("/post")
     public String getMapping(@RequestBody InputParam input) {
         return baseStuff("simple") + input.getName() + " yeah";
+    }
+
+    @GetMapping("/service/log")
+    public void testServiceLog() {
+        SayHello bean = applicationContext.getBean(SayHello.class);
+        System.out.println(bean.sayHello());
     }
 
 }
