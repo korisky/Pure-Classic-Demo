@@ -18,7 +18,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class RoundingLogAspect {
 
-    @Pointcut("@annotation(com.own.spring.demo.anno.RoundingLog)")
+//    @Pointcut("@annotation(com.own.spring.demo.anno.RoundingLog)")
+    @Pointcut("execution(* (@com.own.spring.demo.anno.RoundingLog *..*).*(..))")
     public void roundingLogPointcut() {
     }
 

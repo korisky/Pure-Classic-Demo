@@ -40,7 +40,11 @@ public class LogTmpParams {
      */
     public void beforeCallingLog() {
         // could not be changed, https://github.com/alibaba/fastjson2/issues/798
-        log.info(sign[0] + " [{}] input on [{}] with params:[{}]", className, methodName, args);
+        Object loggingArgs = args;
+        if (className.contains("controller") || className.contains("Controller")) {
+            loggingArgs = args[0];
+        }
+        log.info(sign[0] + " [{}] input on [{}] with params:[{}]", className, methodName, JSONObject.toJSONString(loggingArgs));
     }
 
     /**
