@@ -44,12 +44,12 @@ public class SpringAnnotPostProcessor implements BeanPostProcessor {
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
 
         // cglib enhancer -> Method Interceptor
-//        if (bean.getClass().isAnnotationPresent(CgLibLog.class) || bean.getClass().getSuperclass().isAnnotationPresent(CgLibLog.class)) {
-//            Enhancer enhancer = new Enhancer();
-//            enhancer.setSuperclass(bean.getClass());
-//            enhancer.setCallback(new LogProxyCgLib());
-//            return enhancer.create();
-//        }
+        if (bean.getClass().isAnnotationPresent(CgLibLog.class) || bean.getClass().getSuperclass().isAnnotationPresent(CgLibLog.class)) {
+            Enhancer enhancer = new Enhancer();
+            enhancer.setSuperclass(bean.getClass());
+            enhancer.setCallback(new LogProxyCgLib());
+            return enhancer.create();
+        }
 
         // jdk Invocation Handler
 //        if (bean.getClass().isAnnotationPresent(JdkLog.class) || bean.getClass().getSuperclass().isAnnotationPresent(JdkLog.class)) {

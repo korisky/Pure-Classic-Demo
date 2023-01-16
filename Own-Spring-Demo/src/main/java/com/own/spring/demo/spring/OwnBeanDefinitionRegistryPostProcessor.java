@@ -26,17 +26,17 @@ public class OwnBeanDefinitionRegistryPostProcessor implements BeanDefinitionReg
 
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry beanDefinitionRegistry) throws BeansException {
-        for (String beanDefinitionName : beanDefinitionRegistry.getBeanDefinitionNames()) {
-            BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinition(beanDefinitionName);
-            // take care of AnnotatedBeanDefinition
-            if (beanDefinition instanceof AnnotatedBeanDefinition) {
-                // get metadata for checking specific annotation
-                if (((ScannedGenericBeanDefinition) beanDefinition).getMetadata()
-                        .isAnnotated(CgLibLog.class.getName())) {
-                    // then can take care of these bean's definition, or according to this, register extra beans
-                }
-            }
-        }
+//        for (String beanDefinitionName : beanDefinitionRegistry.getBeanDefinitionNames()) {
+//            BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinition(beanDefinitionName);
+//            // take care of AnnotatedBeanDefinition
+//            if (beanDefinition instanceof AnnotatedBeanDefinition) {
+//                // get metadata for checking specific annotation
+//                if (((ScannedGenericBeanDefinition) beanDefinition).getMetadata()
+//                        .isAnnotated(CgLibLog.class.getName())) {
+//                    // then can take care of these bean's definition, or according to this, register extra beans
+//                }
+//            }
+//        }
     }
 
 

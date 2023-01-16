@@ -7,11 +7,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class BaseController {
 
+    private String CONFIG;
 
-    private String CONFIG = "default";
-
-
-    public void setCONFIG(String config) {
+    public void setConfig(String config) {
         this.CONFIG = config;
     }
 

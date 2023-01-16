@@ -1,6 +1,5 @@
 package com.own.spring.demo.config;
 
-import com.own.spring.demo.controller.BaseController;
 import com.own.spring.demo.controller.SimpleController;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +22,6 @@ public class TestConfig {
 
     @PostConstruct
     public void postConstruct() {
-        simpleController.setCONFIG(configName);
+        simpleController.setConfig(configName);
     }
 }
