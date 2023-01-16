@@ -1,4 +1,4 @@
-package com.own.spring.demo.aspect;
+package com.own.anno.demo.aspect;
 
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -18,8 +18,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class RoundingLogAspect {
 
-//    @Pointcut("@annotation(com.own.spring.demo.anno.RoundingLog)")
-    @Pointcut("execution(* (@com.own.spring.demo.anno.RoundingLog *..*).*(..))")
+    @Pointcut("execution(* (@com.own.anno.demo.annotation.RoundingLog *..*).*(..))")
     public void roundingLogPointcut() {
     }
 
@@ -28,7 +27,7 @@ public class RoundingLogAspect {
      * Only logging, exceptions would let Global Exception Handler handle
      */
     @Around("roundingLogPointcut()")
-    public Object controllersAroundLogging(ProceedingJoinPoint pjp) throws Throwable {
+    public Object roundingLogExecution(ProceedingJoinPoint pjp) throws Throwable {
         LogTmpParams logTmpParams = new LogTmpParams(pjp.getSignature(), pjp.getArgs());
         // 1. input logs
         logTmpParams.beforeCallingLog();

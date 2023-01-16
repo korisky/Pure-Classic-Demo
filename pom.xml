@@ -11,6 +11,7 @@
     <modules>
         <module>Own-Netty-Demo</module>
         <module>Own-Spring-Demo</module>
+        <module>Own-Anno-Demo</module>
     </modules>
 
 
