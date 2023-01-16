@@ -28,10 +28,12 @@ public class RoundingLogAspect {
 
     /**
      * Only logging, exceptions would let Global Exception Handler handle
+     * https://stackoverflow.com/questions/52992365/spring-creates-proxy-for-wrong-classes-when-using-aop-class-level-annotation/53452483#53452483
      */
     @Around("roundingLogPointcut()")
     public Object roundingLogExecution(ProceedingJoinPoint pjp) throws Throwable {
 
+        // check annotation params
         Class<?> aClass = pjp.getTarget().getClass();
         RoundingLog annotation = AnnotationUtils.findAnnotation(pjp.getTarget().getClass(), RoundingLog.class);
         annotation = (null == annotation) ? AnnotationUtils.findAnnotation(aClass.getSuperclass(), RoundingLog.class) : annotation;
@@ -41,6 +43,7 @@ public class RoundingLogAspect {
         }
         StopWatch sw = annotation.carePerformance() ? new StopWatch() : null;
 
+        // logging
         LogTmpParams logTmpParams = new LogTmpParams(pjp.getSignature(), pjp.getArgs(), sw);
         // 1. input logs
         logTmpParams.beforeCallingLog();
