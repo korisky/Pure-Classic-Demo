@@ -19,7 +19,11 @@ import java.lang.reflect.Proxy;
  * CgLib Proxy would throw error
  * https://blog.csdn.net/baidu_28610773/article/details/82926075
  * Reason: CgLib采用的字节码技术, 需要生成被代理类的子类, 再织入逻辑. 但字节码技术与Spring容器处于不同维度
- *      (字节码在JVM层面), 生成代理时无法通过Spring自动注入, 所以没有空Constructor时会导致直接无法启动
+ *      (字节码在JVM层面), 生成代理时无法通过Spring自动注入, 所以没有空Constructor时会导致直接无法启动.
+ *      但实际使用中, 会发现Controller类通常都会继承某个BaseController, 而BaseController又依赖某些配置类. 这时候BaseController
+ *      如果要提供NoArgsConstructor就需要修改所有依赖的Config, postConstruct到BaseController. 不仅如此, Controller类还需要
+ *      Spring自动注入Service, 但通常Service都是private作用的, 而使用CgLib生成的内容会跳过private和final作用域等等. 所有对于
+ *      Controller类使用CgLib还是会较为麻烦
  *
  *
  *
