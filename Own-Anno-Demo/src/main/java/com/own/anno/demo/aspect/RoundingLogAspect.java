@@ -1,11 +1,14 @@
 package com.own.anno.demo.aspect;
 
+import com.own.anno.demo.annotation.RoundingLog;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StopWatch;
 
 /**
  * Aspect for controller
@@ -28,7 +31,17 @@ public class RoundingLogAspect {
      */
     @Around("roundingLogPointcut()")
     public Object roundingLogExecution(ProceedingJoinPoint pjp) throws Throwable {
-        LogTmpParams logTmpParams = new LogTmpParams(pjp.getSignature(), pjp.getArgs());
+
+        Class<?> aClass = pjp.getTarget().getClass();
+        RoundingLog annotation = AnnotationUtils.findAnnotation(pjp.getTarget().getClass(), RoundingLog.class);
+        annotation = (null == annotation) ? AnnotationUtils.findAnnotation(aClass.getSuperclass(), RoundingLog.class) : annotation;
+        if (null == annotation) {
+            log.error("<<< Fatal error, not support logging, go through execution without logs");
+            return pjp.proceed();
+        }
+        StopWatch sw = annotation.carePerformance() ? new StopWatch() : null;
+
+        LogTmpParams logTmpParams = new LogTmpParams(pjp.getSignature(), pjp.getArgs(), sw);
         // 1. input logs
         logTmpParams.beforeCallingLog();
         // 2. process

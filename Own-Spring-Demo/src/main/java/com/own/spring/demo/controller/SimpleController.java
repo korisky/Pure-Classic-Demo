@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequestMapping("/simple")
-@CgLibLog
+//@CgLibLog
 //@JdkLog
-@RoundingLog
+@RoundingLog(carePerformance = true)
 public class SimpleController extends BaseController {
 
     @Autowired
