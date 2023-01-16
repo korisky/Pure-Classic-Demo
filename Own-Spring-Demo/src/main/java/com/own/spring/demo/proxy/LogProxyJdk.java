@@ -34,7 +34,7 @@ public class LogProxyJdk implements InvocationHandler {
             if (proxiedClassName.contains("controller") || proxiedClassName.contains("Controller")) {
                 loggingArgs = params[0];
             }
-            log.debug("[Proxy_{}] input on [{}] with params:[{}]", proxiedClassName, method.getName(), JSONObject.toJSONString(loggingArgs));
+            log.debug("[Proxy_Jdk_{}] input on [{}] with params:[{}]", proxiedClassName, method.getName(), JSONObject.toJSONString(loggingArgs));
         }
     }
 }

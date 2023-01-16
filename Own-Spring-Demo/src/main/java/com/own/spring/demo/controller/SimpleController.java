@@ -1,7 +1,7 @@
 package com.own.spring.demo.controller;
 
+import com.own.anno.demo.annotation.RoundingLog;
 import com.own.spring.demo.anno.CgLibLog;
-import com.own.spring.demo.anno.RoundingLog;
 import com.own.spring.demo.param.InputParam;
 import com.own.spring.demo.service.SayHello;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequestMapping("/simple")
-//@CgLibLog
+@CgLibLog
 //@JdkLog
 @RoundingLog
 public class SimpleController extends BaseController {
