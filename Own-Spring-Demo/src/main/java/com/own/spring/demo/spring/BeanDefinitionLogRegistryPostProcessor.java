@@ -57,11 +57,11 @@ public class BeanDefinitionLogRegistryPostProcessor implements BeanDefinitionReg
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry beanDefinitionRegistry) throws BeansException {
 
-        ClassPathReferenceScanner scanner = new ClassPathReferenceScanner(beanDefinitionRegistry);
-        scanner.setAnnotationClass(this.annotationClass);
-        scanner.setResourceLoader(this.applicationContext);
-        scanner.registerFilters();
-        scanner.scan(basePackage);
+//        ClassPathReferenceScanner scanner = new ClassPathReferenceScanner(beanDefinitionRegistry);
+//        scanner.setAnnotationClass(this.annotationClass);
+//        scanner.setResourceLoader(this.applicationContext);
+//        scanner.registerFilters();
+//        scanner.scan(basePackage);
 
     }
 
