@@ -1,9 +1,12 @@
 package com.own.netty.demo;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
+
+import java.nio.charset.StandardCharsets;
 
 public class DiscardServerHandler extends ChannelInboundHandlerAdapter {
 
@@ -40,8 +43,16 @@ public class DiscardServerHandler extends ChannelInboundHandlerAdapter {
     // Echo version of server
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        // normal step for casting obj 2 ByteBuf for further use
+        ByteBuf in = (ByteBuf) msg;
+        byte[] req = new byte[in.readableBytes()];
+        in.readBytes(req);
+        String msgStr = new String(req, StandardCharsets.UTF_8);
+        System.out.println("Server received: " + msgStr);
+        // construct response, here msg already been used, ctx.write(msg) would response nothing
+        ByteBuf resp = Unpooled.copiedBuffer(msgStr.getBytes(StandardCharsets.UTF_8));
         // rather than release the ctx, Netty would help us release it after written it out to the wire
-        ctx.write(ctx);
+        ctx.write(resp);
         // write does not make the msg written out to the wire. It is buffered internally and then flushed out
         // by using .flush(). Or else, we could use .writeAndFlush(msg) for brevity
         ctx.flush();
