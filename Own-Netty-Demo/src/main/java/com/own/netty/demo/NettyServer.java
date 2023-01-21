@@ -13,11 +13,11 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
  * @author Roylic
  * 2023/1/12
  */
-public class DiscardServer {
+public class NettyServer {
 
     private int port;
 
-    public DiscardServer(int port) {
+    public NettyServer(int port) {
         this.port = port;
     }
 
@@ -39,7 +39,8 @@ public class DiscardServer {
                                 @Override
                                 protected void initChannel(SocketChannel ch) {
                                     // Official recommendation -> always create new Handler instance
-                                    ch.pipeline().addLast(new DiscardServerHandler());
+//                                    ch.pipeline().addLast(new DiscardServerHandler());
+                                    ch.pipeline().addLast(new TimeServerHandler());
                                 }
                             })
                     // optionals by using tcp
@@ -60,6 +61,6 @@ public class DiscardServer {
 
     public static void main(String[] args) throws Exception {
         int port = 8088;
-        new DiscardServer(port).run();
+        new NettyServer(port).run();
     }
 }
