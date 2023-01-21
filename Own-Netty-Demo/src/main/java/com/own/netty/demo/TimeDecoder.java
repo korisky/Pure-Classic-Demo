@@ -1,5 +1,6 @@
 package com.own.netty.demo;
 
+import com.own.netty.demo.pojo.UnixTime;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -19,6 +20,7 @@ public class TimeDecoder extends ByteToMessageDecoder {
             return;
         }
         // add complete msg into the list, for further consumption
-        list.add(byteBuf.readBytes(4));
+//        list.add(byteBuf.readBytes(4));
+        list.add(new UnixTime(byteBuf.readUnsignedInt()));
     }
 }

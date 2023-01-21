@@ -13,11 +13,11 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
  * @author Roylic
  * 2023/1/12
  */
-public class NettyServer {
+public class TimeServer {
 
     private int port;
 
-    public NettyServer(int port) {
+    public TimeServer(int port) {
         this.port = port;
     }
 
@@ -40,7 +40,7 @@ public class NettyServer {
                                 protected void initChannel(SocketChannel ch) {
                                     // Official recommendation -> always create new Handler instance
 //                                    ch.pipeline().addLast(new DiscardServerHandler());
-                                    ch.pipeline().addLast(new TimeServerHandler());
+                                    ch.pipeline().addLast(new TimeEncoder(), new TimeServerHandler());
                                 }
                             })
                     // optionals by using tcp
@@ -61,6 +61,6 @@ public class NettyServer {
 
     public static void main(String[] args) throws Exception {
         int port = 8088;
-        new NettyServer(port).run();
+        new TimeServer(port).run();
     }
 }
