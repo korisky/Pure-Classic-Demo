@@ -6,7 +6,7 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
 
 public class TimeClient {
 
@@ -19,7 +19,8 @@ public class TimeClient {
             // client use Bootstrap for initialization, rather then ServerBootstrap
             Bootstrap b = new Bootstrap();
             b.group(workerGroup);
-            b.channel(NioServerSocketChannel.class);
+            // rather than NioServerSocketChannel, NioSocketChannel is for client side
+            b.channel(NioSocketChannel.class);
             b.option(ChannelOption.SO_KEEPALIVE, true);
             b.handler(new ChannelInitializer<SocketChannel>() {
                 @Override
