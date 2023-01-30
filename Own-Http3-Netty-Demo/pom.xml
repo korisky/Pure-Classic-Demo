@@ -21,13 +21,13 @@
         <dependency>
             <groupId>io.netty.incubator</groupId>
             <artifactId>netty-incubator-codec-quic</artifactId>
-            <version>0.0.7.Final</version>
+            <version>0.0.20.Final</version>
         </dependency>
 
         <dependency>
             <groupId>io.netty.incubator</groupId>
             <artifactId>netty-incubator-codec-http3</artifactId>
-            <version>0.0.1.Final</version>
+            <version>0.0.15.Final</version>
         </dependency>
     </dependencies>
 
