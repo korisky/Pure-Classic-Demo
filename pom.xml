@@ -12,6 +12,7 @@
     <modules>
         <module>Own-Netty-Demo</module>
         <module>Own-Spring-Demo</module>
+        <module>Own-Http3-Netty-Demo</module>
     </modules>
 
 
