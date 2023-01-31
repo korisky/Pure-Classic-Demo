@@ -17,18 +17,7 @@
     </properties>
 
     <dependencies>
-        <!-- Working for x86_64 MacOs -->
-        <dependency>
-            <groupId>io.netty.incubator</groupId>
-            <artifactId>netty-incubator-codec-quic</artifactId>
-            <version>0.0.20.Final</version>
-        </dependency>
 
-        <dependency>
-            <groupId>io.netty.incubator</groupId>
-            <artifactId>netty-incubator-codec-http3</artifactId>
-            <version>0.0.15.Final</version>
-        </dependency>
     </dependencies>
 
 </project>
