@@ -10,10 +10,13 @@ import io.netty.util.ReferenceCountUtil;
 import java.nio.charset.StandardCharsets;
 
 /**
+ * If server response dataFrame with header & data -> channelRead(header) first, then channelRead(data)
+ *
  * @author Roylic
  * 2023/1/31
  */
 public class Http3ClientHandler extends Http3RequestStreamInboundHandler {
+
 
     @Override
     protected void channelRead(ChannelHandlerContext ctx, Http3HeadersFrame frame, boolean isLast) throws Exception {
