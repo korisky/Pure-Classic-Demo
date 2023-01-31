@@ -30,7 +30,7 @@ public class Http3ServerDemo {
         // construct ssl context
         QuicSslContext sslContext = constructQUICServerSslCtx();
 
-        // construct channel
+        // construct channel -> encryption & decryption & configuration
         ChannelHandler codec = Http3.newQuicServerCodecBuilder()
                 .sslContext(sslContext)
                 // idle means waiting not close connection (channel) even no traffic
@@ -63,14 +63,18 @@ public class Http3ServerDemo {
                     }
                 }).build();
 
-        // bootstrap netty server for QUIC-Http3
+        // start Netty for QUIC-Http3-Server
         NioEventLoopGroup group = new NioEventLoopGroup(1);
         try {
             Bootstrap bs = new Bootstrap();
             Channel channel = bs.group(group)
+                    // for QUIC using NioDatagramChannel rather than NioServerSocketChannel
+                    // server's channel = client's channel
                     .channel(NioDatagramChannel.class)
                     .handler(codec)
                     .bind(new InetSocketAddress(PORT)).sync().channel();
+
+            System.out.println("NETTY-HTTP3-QUIC Server start");
             channel.closeFuture().sync();
         } finally {
             group.shutdownGracefully();
