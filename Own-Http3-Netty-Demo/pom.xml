@@ -18,6 +18,13 @@
 
     <dependencies>
 
+        <!-- No in Maven 2 repository, have to compile by yourself -->
+        <dependency>
+            <groupId>io.netty.incubator</groupId>
+            <artifactId>netty-incubator-codec-http3</artifactId>
+            <version>0.0.16.Final-SNAPSHOT</version>
+        </dependency>
+
     </dependencies>
 
 </project>
