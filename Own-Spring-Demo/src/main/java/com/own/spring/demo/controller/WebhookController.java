@@ -13,7 +13,7 @@ import java.util.Map;
 public class WebhookController {
 
 
-    @PostMapping
+    @PostMapping("/decoding")
     public ResponseEntity<Object> webhook_endpoint(@RequestHeader Map<String, String> headers,
                                                    @RequestBody String body) {
         log.debug("All Headers: {}", JSONObject.toJSONString(headers));
