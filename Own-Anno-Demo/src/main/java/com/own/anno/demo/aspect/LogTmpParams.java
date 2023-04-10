@@ -48,7 +48,7 @@ public class LogTmpParams {
         // could not be changed, https://github.com/alibaba/fastjson2/issues/798
         Object loggingArgs = args;
         if (className.contains("controller") || className.contains("Controller")) {
-            loggingArgs = args[0];
+            loggingArgs = this.args.length > 0 ? args[0] : "";
         }
         log.info(sign[0] + " [{}] input on [{}] with params:[{}]", className, methodName, JSONObject.toJSONString(loggingArgs));
     }
