@@ -1,0 +1,11 @@
+server:
+  port: 10101
+spring:
+  application:
+    name: grpc-server
+  profiles:
+    active: local
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
