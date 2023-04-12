@@ -15,6 +15,7 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <!-- project dependencies -->
+        <ownProto.ver>1.0-SNAPSHOT</ownProto.ver>
         <springboot.ver>2.3.12.RELEASE</springboot.ver>
         <nacos.ver>2.2.6.RELEASE</nacos.ver>
         <httpClient.ver>4.5.13</httpClient.ver>
@@ -22,11 +23,12 @@
     </properties>
 
     <dependencies>
+
         <!-- grpc protobuf -->
         <dependency>
             <groupId>com.own</groupId>
             <artifactId>Own-Grpc-Proto</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${ownProto.ver}</version>
         </dependency>
 
         <!-- Springboot & cloud -->

@@ -14,6 +14,51 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <!-- project dependencies -->
+        <ownProto.ver>1.0-SNAPSHOT</ownProto.ver>
+        <springboot.ver>2.3.12.RELEASE</springboot.ver>
+        <nacos.ver>2.2.6.RELEASE</nacos.ver>
+        <httpClient.ver>4.5.13</httpClient.ver>
+        <grpcClient.ver>2.14.0.RELEASE</grpcClient.ver>
     </properties>
+
+    <dependencies>
+
+        <!-- grpc protobuf -->
+        <dependency>
+            <groupId>com.own</groupId>
+            <artifactId>Own-Grpc-Proto</artifactId>
+            <version>${ownProto.ver}</version>
+        </dependency>
+
+        <!-- Springboot & cloud -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <version>${springboot.ver}</version>
+        </dependency>
+
+        <!-- Nacos -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+            <version>${nacos.ver}</version>
+        </dependency>
+        <!-- http client -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${httpClient.ver}</version>
+        </dependency>
+
+        <!-- Grpc register to Nacos-->
+        <dependency>
+            <groupId>net.devh</groupId>
+            <artifactId>grpc-client-spring-boot-starter</artifactId>
+            <version>${grpcClient.ver}</version>
+        </dependency>
+
+    </dependencies>
+
 
 </project>
