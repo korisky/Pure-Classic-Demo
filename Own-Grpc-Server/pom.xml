@@ -17,9 +17,11 @@
         <!-- project dependencies -->
         <ownProto.ver>1.0-SNAPSHOT</ownProto.ver>
         <springboot.ver>2.3.12.RELEASE</springboot.ver>
-        <nacos.ver>2.2.6.RELEASE</nacos.ver>
+        <open-feign.ver>2.2.9.RELEASE</open-feign.ver>
+        <alibaba-nacos.ver>2.2.8.RELEASE</alibaba-nacos.ver>
         <httpClient.ver>4.5.13</httpClient.ver>
         <grpcServer.ver>2.14.0.RELEASE</grpcServer.ver>
+        <micro-meter.ver>1.10.1</micro-meter.ver>
     </properties>
 
     <dependencies>
@@ -37,12 +39,28 @@
             <artifactId>spring-boot-starter-web</artifactId>
             <version>${springboot.ver}</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+            <version>${springboot.ver}</version>
+        </dependency>
+        <!-- Open Feign -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <version>${open-feign.ver}</version>
+        </dependency>
 
         <!-- Nacos -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
-            <version>${nacos.ver}</version>
+            <version>${alibaba-nacos.ver}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+            <version>${alibaba-nacos.ver}</version>
         </dependency>
         <!-- http client -->
         <dependency>
@@ -56,6 +74,12 @@
             <groupId>net.devh</groupId>
             <artifactId>grpc-server-spring-boot-starter</artifactId>
             <version>${grpcServer.ver}</version>
+        </dependency>
+        <!-- micro meter -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-core</artifactId>
+            <version>${micro-meter.ver}</version>
         </dependency>
 
 

@@ -24,11 +24,6 @@ public class NewInstanceEventListener extends Subscriber<InstancesChangeEvent> {
     @Override
     public void onEvent(InstancesChangeEvent instancesChangeEvent) {
         System.out.println(instancesChangeEvent.getServiceName());
-
-//        if (grpcServiceMap.containsKey(newInstanceEventListener.getServiceName())) {
-//            // TODO update the grpc stub
-//            System.out.println();
-//        }
     }
 
 
