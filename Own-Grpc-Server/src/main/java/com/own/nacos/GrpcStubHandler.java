@@ -11,13 +11,9 @@ import java.util.Map;
 @Component
 public class GrpcStubHandler {
 
-    // <serviceName, List<stub>>
-    private Map<String, List<? extends AbstractStub<?>>> grpcServiceMap;
-
     public GrpcStubHandler() {
-        grpcServiceMap = new HashMap<>();
         // register listener
-        NotifyCenter.registerSubscriber(new NewInstanceEventListener(grpcServiceMap));
+        NotifyCenter.registerSubscriber(new NewInstanceEventListener());
     }
 
 }
