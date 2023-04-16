@@ -7,4 +7,13 @@ management:
 
 logging:
   pattern:
-    console: "%date{yy-MM-dd HH:mm:ss.SSS} %5p ${PID:-} --- [%15.15t] %-40.40logger{39}[%4line]: %msg%n"
+    #    console: "%date{yy-MM-dd HH:mm:ss.SSS} %5p ${PID:-} --- [%15.15t] %-40.40logger{39}[%4line]: %msg%n"
+    console: "${PID:-} %-40.40logger{39}[%4line]: %msg%n"
+  level:
+    root: info
+    org.apache: info
+    org.springframework.web: info
+    org.springframework.jdbc.core.JdbcTemplate: DEBUG
+    com.alibaba.nacos: debug
+    org.web3j: info
+
