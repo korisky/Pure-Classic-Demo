@@ -1,5 +1,5 @@
 server:
-  port: 10101
+  port: 40908
 spring:
   application:
     name: grpc-server
