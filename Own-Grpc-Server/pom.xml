@@ -18,7 +18,7 @@
         <ownProto.ver>1.0-SNAPSHOT</ownProto.ver>
         <springboot.ver>2.3.12.RELEASE</springboot.ver>
         <open-feign.ver>2.2.9.RELEASE</open-feign.ver>
-        <alibaba-nacos.ver>2.2.9.RELEASE</alibaba-nacos.ver>
+        <alibaba-nacos.ver>2.2.8.RELEASE</alibaba-nacos.ver>
         <httpClient.ver>4.5.13</httpClient.ver>
         <grpcServer.ver>2.14.0.RELEASE</grpcServer.ver>
         <micro-meter.ver>1.10.1</micro-meter.ver>
