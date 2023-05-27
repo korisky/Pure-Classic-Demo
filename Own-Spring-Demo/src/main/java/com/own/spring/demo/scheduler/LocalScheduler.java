@@ -11,7 +11,7 @@ public class LocalScheduler {
 
     private final CustomSpringEventPublisher eventPublisher;
 
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "0/3 * * * * ?")
     public void triggerEvent() {
         eventPublisher.publishCustomEvent("Haha");
     }
