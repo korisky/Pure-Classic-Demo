@@ -42,7 +42,9 @@ public class Http3ServerHandler extends Http3RequestStreamInboundHandler {
         headersFrame.headers().add("server", "netty");
         headersFrame.headers().addInt("content-length", CONTENT.length);
         ctx.write(headersFrame);
-        ctx.writeAndFlush(new DefaultHttp3DataFrame(Unpooled.wrappedBuffer(CONTENT)))
+        ctx.writeAndFlush(
+                        new DefaultHttp3DataFrame(
+                                Unpooled.wrappedBuffer(CONTENT)))
                 // adding SHUTDOWN_OUTPUT = WRITE_FIN => data transfer finished signal
                 .addListener(QuicStreamChannel.SHUTDOWN_OUTPUT);
     }
