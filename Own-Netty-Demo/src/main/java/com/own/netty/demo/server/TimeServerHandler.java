@@ -1,4 +1,4 @@
-package com.own.netty.demo;
+package com.own.netty.demo.server;
 
 import com.own.netty.demo.pojo.UnixTime;
 import io.netty.buffer.ByteBuf;

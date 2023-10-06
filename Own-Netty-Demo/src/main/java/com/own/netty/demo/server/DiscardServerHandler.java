@@ -1,4 +1,4 @@
-package com.own.netty.demo;
+package com.own.netty.demo.server;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -8,6 +8,7 @@ import io.netty.util.ReferenceCountUtil;
 
 import java.nio.charset.StandardCharsets;
 
+@Deprecated
 public class DiscardServerHandler extends ChannelInboundHandlerAdapter {
 
 

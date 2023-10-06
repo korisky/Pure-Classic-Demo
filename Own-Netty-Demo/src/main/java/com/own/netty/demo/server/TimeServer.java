@@ -1,5 +1,6 @@
-package com.own.netty.demo;
+package com.own.netty.demo.server;
 
+import com.own.netty.demo.TimeEncoder;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -8,19 +9,22 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import lombok.RequiredArgsConstructor;
 
 /**
+ * Netty simple server
+ *
  * @author Roylic
  * 2023/1/12
  */
+@RequiredArgsConstructor
 public class TimeServer {
 
-    private int port;
+    private final int port;
 
-    public TimeServer(int port) {
-        this.port = port;
-    }
-
+    /**
+     * main set-up for Netty-Server
+     */
     public void run() throws Exception {
         // NioEventLoopGroup is a multi-threaded event loop that handles IO operation
         EventLoopGroup bossGroup = new NioEventLoopGroup();
@@ -59,6 +63,7 @@ public class TimeServer {
         }
     }
 
+    // server starter
     public static void main(String[] args) throws Exception {
         int port = 8088;
         new TimeServer(port).run();
