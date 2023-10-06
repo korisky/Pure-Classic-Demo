@@ -17,10 +17,14 @@ import lombok.RequiredArgsConstructor;
  * @author Roylic
  * 2023/1/12
  */
-@RequiredArgsConstructor
+// @RequiredArgsConstructor
 public class TimeServer {
 
     private final int port;
+
+    public TimeServer(int port) {
+        this.port = port;
+    }
 
     /**
      * main set-up for Netty-Server
@@ -54,6 +58,7 @@ public class TimeServer {
 
             // bind and start to accept incoming connections
             ChannelFuture channelFuture = bootstrap.bind(port).sync();
+            System.out.println("Server start");
 
             // wait until the server socket is closed
             channelFuture.channel().closeFuture().sync();
