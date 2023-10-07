@@ -78,7 +78,7 @@
             <version>2.0.22</version>
         </dependency>
 
-        <!-- Redison -->
+        <!-- Redisson -->
         <dependency>
             <groupId>org.redisson</groupId>
             <artifactId>redisson-spring-boot-starter</artifactId>
