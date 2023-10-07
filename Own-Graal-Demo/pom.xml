@@ -19,8 +19,6 @@
         <java.version>17</java.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <!-- image -->
-        <!--        <spring-boot.build-image.imageName>own.graal.demo</spring-boot.build-image.imageName>-->
     </properties>
 
     <dependencies>
@@ -52,14 +50,12 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-            <!-- graalvm aot -->
+            <!-- graalvm aot related plugin -->
             <plugin>
                 <groupId>org.graalvm.buildtools</groupId>
                 <artifactId>native-maven-plugin</artifactId>
                 <version>0.9.27</version>
-                <!--                <configuration>-->
-                <!--                    <imageName>${project.artifactId}</imageName>-->
-                <!--                </configuration>-->
+                <!-- build executable binary need these configuration -->
                 <extensions>true</extensions>
                 <executions>
                     <execution>
