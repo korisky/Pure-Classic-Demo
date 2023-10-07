@@ -12,13 +12,15 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>Own-Graal-Demo</artifactId>
+    <artifactId>own-graal-demo</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
         <java.version>17</java.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
+        <!-- image -->
+        <!--        <spring-boot.build-image.imageName>own.graal.demo</spring-boot.build-image.imageName>-->
     </properties>
 
     <dependencies>
@@ -45,10 +47,29 @@
 
     <build>
         <plugins>
+            <!-- spring-mvn-executable -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <!-- graalvm aot -->
             <plugin>
                 <groupId>org.graalvm.buildtools</groupId>
                 <artifactId>native-maven-plugin</artifactId>
                 <version>0.9.27</version>
+                <!--                <configuration>-->
+                <!--                    <imageName>${project.artifactId}</imageName>-->
+                <!--                </configuration>-->
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <id>build-native</id>
+                        <goals>
+                            <goal>compile-no-fork</goal>
+                        </goals>
+                        <phase>package</phase>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

@@ -12,9 +12,3 @@ spring:
 logging:
   level:
     com.own.graal: debug
-
-
-
-
-
-
