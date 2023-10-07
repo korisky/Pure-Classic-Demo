@@ -1,5 +1,6 @@
-package com.own.netty.demo;
+package com.own.netty.demo.client;
 
+import com.own.netty.demo.TimeDecoder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;

@@ -43,6 +43,7 @@
     <build>
         <plugins>
 
+            <!-- compile to executable jar -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -58,6 +59,7 @@
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>com.own.netty.demo.server.TimeServer</mainClass>
+                                    <!--                                    <mainClass>com.own.netty.demo.client.TimeClient</mainClass>-->
                                 </transformer>
                             </transformers>
                         </configuration>
