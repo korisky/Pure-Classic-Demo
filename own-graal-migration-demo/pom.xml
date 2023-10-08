@@ -95,6 +95,7 @@
     </repositories>
 
     <pluginRepositories>
+        <!-- Spring Milestone -->
         <pluginRepository>
             <id>spring-milestone</id>
             <name>Spring milestone</name>
