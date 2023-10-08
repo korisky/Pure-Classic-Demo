@@ -1,0 +1,14 @@
+server:
+  port: 9910
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: own-graal-migration-demo
+  main:
+    allow-bean-definition-overriding: true
+
+logging:
+  level:
+    com.own.graal: debug

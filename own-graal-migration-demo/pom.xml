@@ -39,11 +39,11 @@
         </dependency>
 
 
-        <!-- graalvm needs: Spring-Native -->
+        <!-- run spring program as native image -->
         <dependency>
             <groupId>org.springframework.experimental</groupId>
             <artifactId>spring-native</artifactId>
-            <version>0.12.2</version>
+            <version>0.12.1</version>
         </dependency>
 
 
@@ -51,54 +51,38 @@
 
 
     <build>
-            <plugins>
-                <!-- graalvm needs: build-packs -->
-                <plugin>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-maven-plugin</artifactId>
-                    <configuration>
-                        <image>
-                            <builder>paketobuildpacks/builder:tiny</builder>
-                            <env>
-                                <BP_NATIVE_IMAGE>true</BP_NATIVE_IMAGE>
-                            </env>
-                        </image>
-                    </configuration>
-                </plugin>
-                <!-- graalvm needs: spring-aot -->
-                <plugin>
-                    <groupId>org.springframework.experimental</groupId>
-                    <artifactId>spring-aot-maven-plugin</artifactId>
-                    <version>0.12.1</version>
-                    <executions>
-                        <execution>
-                            <id>generate</id>
-                            <goals>
-                                <goal>generate</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-            </plugins>
+        <plugins>
+            <!-- enable native image support -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <image>
+                        <builder>paketobuildpacks/builder:tiny</builder>
+                        <env>
+                            <BP_NATIVE_IMAGE>true</BP_NATIVE_IMAGE>
+                        </env>
+                    </image>
+                </configuration>
+            </plugin>
+            <!-- spring-aot plugin -->
+            <plugin>
+                <groupId>org.springframework.experimental</groupId>
+                <artifactId>spring-aot-maven-plugin</artifactId>
+                <version>0.12.1</version>
+                <executions>
+                    <execution>
+                        <id>generate</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 
     <repositories>
-        <!-- Maven Centre -->
-        <repository>
-            <id>central</id>
-            <name>Maven Repository Switchboard</name>
-            <layout>default</layout>
-            <url>https://repo1.maven.org/maven2</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <!-- Spring Release -->
-        <repository>
-            <id>spring-repo</id>
-            <name>Spring Repository</name>
-            <url>https://repo.spring.io/release</url>
-        </repository>
         <!-- Spring Milestone -->
         <repository>
             <id>spring-milestone</id>
@@ -109,9 +93,9 @@
 
     <pluginRepositories>
         <pluginRepository>
-            <id>spring-repo</id>
-            <name>Spring Repository</name>
-            <url>https://repo.spring.io/release</url>
+            <id>spring-milestone</id>
+            <name>Spring milestone</name>
+            <url>https://repo.spring.io/milestone</url>
         </pluginRepository>
     </pluginRepositories>
 
