@@ -46,22 +46,13 @@
     <build>
         <plugins>
             <!-- spring-mvn-executable -->
-            <!--            <plugin>-->
-            <!--                <groupId>org.springframework.boot</groupId>-->
-            <!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
-            <!--                <configuration>-->
-            <!--                    <image>-->
-            <!--                        <buildpacks>-->
-            <!--                            <buildpack>gcr.io/paketo-buildpacks/graalvm</buildpack>-->
-            <!--                            <buildpack>gcr.io/paketo-buildpacks/java-native-image</buildpack>-->
-            <!--                        </buildpacks>-->
-            <!--                    </image>-->
-            <!--                </configuration>-->
-            <!--            </plugin>-->
-
-
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
             <!-- graalvm aot related plugin -->
-            <!-- use idea mvn native:compile-no-fork -->
+            <!-- use idea (under mvn 3.9.5) mvn native:compile-no-fork -->
+            <!-- or command (under mvn 3.6.3): mvn clean package -Pnative -->
             <plugin>
                 <groupId>org.graalvm.buildtools</groupId>
                 <artifactId>native-maven-plugin</artifactId>
