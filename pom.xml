@@ -19,6 +19,7 @@
     <modules>
         <module>Own-Spring-Demo</module>
         <module>Own-Http3-Netty-Demo</module>
+        <module>own-oceanbase-demo</module>
     </modules>
 
     <dependencyManagement>
