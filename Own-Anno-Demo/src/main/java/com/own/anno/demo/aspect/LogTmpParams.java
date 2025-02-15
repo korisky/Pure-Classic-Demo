@@ -1,8 +1,8 @@
 package com.own.anno.demo.aspect;
 
 import com.alibaba.fastjson2.JSONObject;
-import com.roylic.struct.CallValue;
-import com.roylic.struct.ReturnValue;
+import com.roylic.struct.FuncResult;
+import com.roylic.struct.RpcResult;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.Signature;
 import org.springframework.util.StopWatch;
@@ -73,12 +73,12 @@ public class LogTmpParams {
             return;
         }
         // b. return call value with error-enum
-        if (proceed instanceof CallValue || proceed instanceof ReturnValue) {
-            Enum error = proceed instanceof CallValue ?
-                    ((CallValue<?, ?>) proceed).getError() : ((ReturnValue<?, ?>) proceed).getError();
+        if (proceed instanceof RpcResult || proceed instanceof FuncResult) {
+            Enum error = proceed instanceof RpcResult ?
+                    ((RpcResult<?, ?>) proceed).getError() : ((FuncResult<?, ?>) proceed).getError();
             if (null == error) {
-                Object data = proceed instanceof CallValue ?
-                        ((CallValue<?, ?>) proceed).getData() : ((ReturnValue<?, ?>) proceed).getData();
+                Object data = proceed instanceof RpcResult ?
+                        ((RpcResult<?, ?>) proceed).getData() : ((FuncResult<?, ?>) proceed).getData();
                 if (null == stopWatch) {
                     log.info(sign[1] + " [{}] output on [{}] with params:[{}]", className, methodName, JSONObject.toJSONString(data));
                 } else {

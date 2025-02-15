@@ -17,7 +17,7 @@
         <dependency>
             <groupId>com.roylic</groupId>
             <artifactId>self-struct-demo</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>2.0-SNAPSHOT</version>
         </dependency>
 
         <!-- AOP -->
