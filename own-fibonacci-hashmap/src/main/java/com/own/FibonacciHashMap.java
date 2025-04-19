@@ -1,5 +1,6 @@
 package com.own;
 
+import javax.naming.SizeLimitExceededException;
 import java.io.Serializable;
 import java.util.*;
 
@@ -402,7 +403,7 @@ public class FibonacciHashMap<K, V> extends AbstractMap<K, V>
             this.threshold = calculateThreshold(newCap, loadFactor);
         } else if (s + size > threshold && table.length < MAXIMUM_CAPACITY) {
             // resize existing table if exceed threshold
-            resize()
+            resize();
         }
         // 2) add entries from map
         for (Entry<? extends K, ? extends V> entry : m.entrySet()) {
@@ -411,6 +412,93 @@ public class FibonacciHashMap<K, V> extends AbstractMap<K, V>
             // putVal, and allow overwrite
             putVal(key, value, true);
         }
+    }
+
+
+    // --- Resizing ---
+    final Node<K, V>[] resize() {
+        Node<K, V>[] oldTab = table;
+        int oldCap = (oldTab == null) ? 0 : oldTab.length;
+        int oldThr = threshold;
+        int newCap, newThr = 0;
+
+        if (oldCap > 0) {
+            // already contains value
+            if (oldCap >= MAXIMUM_CAPACITY) {
+                threshold = Integer.MAX_VALUE;
+                throw new RuntimeException("Exceed maximum capacity, resize failed");
+            }
+            // double capacity (and threshold, if meet)
+            newCap = oldCap << 1;
+            if (newCap < MAXIMUM_CAPACITY && oldCap >= DEFAULT_INIT_CAPACITY) {
+                newThr = oldThr << 1;
+            }
+        } else if (oldThr > 0) {
+            // not value, but with threshold
+            newCap = oldThr;
+        } else {
+            // default setting
+            newCap = DEFAULT_INIT_CAPACITY;
+            newThr = (int) (DEFAULT_LOAD_FACTOR * newCap);
+        }
+
+        // if threshold wasn't doubled, calculate according to newCap
+        if (newThr == 0) {
+            newThr = calculateThreshold(newCap, loadFactor);
+        }
+        // update reference
+        threshold = newThr;
+        capacityExponent = calculateExponent(newCap);
+        Node<K, V>[] newTab = createTable(newCap);
+        table = newTab;
+
+        // transfer nodes
+        if (oldTab != null) {
+            for (int j = 0; j < oldCap; j++) {
+                Node<K, V> p = oldTab[j];
+                if (p.next == null) {
+                    // single node new-table-tapping
+                    newTab[fibonacciIndex(p.hash, capacityExponent)] = p;
+                } else {
+                    // multiple nodes on the chain
+                    Node<K, V> loHead = null, loTail = null;
+                    Node<K, V> hiHead = null, hiTail = null;
+                    Node<K, V> next;
+                    // first old-chain to multiple new-chains
+                    do {
+                        next = p.next;
+                        if ((p.hash & oldCap) == 0) {
+                            // stays same index
+                            if (loTail == null) {
+                                loHead = p;
+                            } else {
+                                loTail.next = p;
+                            }
+                            loTail = p;
+                        } else {
+                            // moves to another index
+                            if (hiTail == null) {
+                                hiHead = p;
+                            } else {
+                                hiTail.next = p;
+                            }
+                            hiTail = p;
+                        }
+                    } while ((p = next) != null);
+                    // link new low chain to new table at idx j
+                    if (loTail != null) {
+                        loTail.next = null;
+                        newTab[j] = loHead;
+                    }
+                    // link new high chain to new table at idx j
+                    if (hiTail != null) {
+                        hiTail.next = null;
+                        newTab[j + oldCap] = hiHead;
+                    }
+                }
+            }
+        }
+        return newTab;
     }
 
 
