@@ -13,35 +13,32 @@ import java.util.*;
 public class FibonacciHashMap<K, V> extends AbstractMap<K, V>
         implements Map<K, V>, Cloneable, Serializable {
 
-
-    /* --- Constants --- */
+    // --- Constants ---
     private static final long serialVersionUID = 1L;
     private static final int DEFAULT_INIT_CAPACITY = 16; // power of 2
     private static final int MAXIMUM_CAPACITY = 1 << 30;
     private static final float DEFAULT_LOAD_FACTOR = 0.75f;
+    // The golden ratio conjugate (~0.618) scaled to 32 bits.
+    // Used in Fibonacci hashing: index = (key.hashCode() * CONSTANT) >>> shift.
     private static final int FIBONACCI_HASH_CONSTANT = 0x9e3779b9;
 
-
-    /* --- Instance Variables --- */
+    // --- Instance Variables ---
     transient Node<K, V>[] table; // bucket array
     transient int size;
     transient int modCount;
-    int threshold;
-    final float loadFactor;
-    transient int capacityExponent; // exponent 'w' where capacity = 2 ^ w
-
+    int threshold; // Next size value at which to resize (capacity * load factor)
+    final float loadFactor; // Load factor for resizing
+    transient int capacityBits; // exponent 'w' where capacity = 2 ^ w
 
     /* --- Views (cached) --- */
     transient Set<K> keySet;
     transient Collection<V> values;
     transient Set<Map.Entry<K, V>> entrySet; // keep transient for default serialization
 
-
     /* --- Constructors --- */
     public FibonacciHashMap() {
         this.loadFactor = DEFAULT_LOAD_FACTOR;
     }
-
 
     public FibonacciHashMap(int initialCapacity, float loadFactor) {
         if (initialCapacity < 0) {
@@ -50,9 +47,27 @@ public class FibonacciHashMap<K, V> extends AbstractMap<K, V>
         if (loadFactor <= 0 || Float.isNaN(loadFactor)) {
             throw new IllegalArgumentException("Illegal load factor " + loadFactor);
         }
-
         this.loadFactor = loadFactor;
+        int capacity = tableSizeFor(initialCapacity);
+        this.capacityBits = calculateExponent(capacity);
+        this.threshold = calculateThreshold(capacity, loadFactor);
     }
+
+    public FibonacciHashMap(Map<? extends K, ? extends V> m) {
+        this.loadFactor = DEFAULT_LOAD_FACTOR;
+    }
+
+
+    // --- Public Functions ---
+    @Override
+    public Set<Entry<K, V>> entrySet() {
+        Set<Entry<K, V>> es = entrySet;
+        return es == null
+                ? (entrySet = new EntrySet())
+    }
+
+
+
 
 
     /* --- Hashing (CORE) --- */
@@ -64,7 +79,7 @@ public class FibonacciHashMap<K, V> extends AbstractMap<K, V>
         // 1) get the raw 32-bit hashCode
         int h = (key == null) ? 0 : key.hashCode();
         // 2) figure our how many idx-bits we need, is log_2{(table.len)}
-        int currentExponent = (table == null) ? calculateExponent(DEFAULT_INIT_CAPACITY) : capacityExponent;
+        int currentExponent = (table == null) ? calculateExponent(DEFAULT_INIT_CAPACITY) : capacityBits;
         // corner case: only 1 slot, always result in idx 0
         if (currentExponent == 0) {
             return 0;
@@ -72,6 +87,89 @@ public class FibonacciHashMap<K, V> extends AbstractMap<K, V>
         // product = h × A (mod 2^(32))
         // x Golden ratio, then unsigned-right-shift, resulting in 'slot' of the array we use
         return (h * FIBONACCI_HASH_CONSTANT) >>> (Integer.SIZE - currentExponent);
+    }
+
+    /**
+     * Put Map entries
+     */
+    final void putMapEntries(Map<? extends K, ? extends V> m, boolean evict) {
+        int s = m.size();
+        if (s > 0) {
+            // 1) ensure table has sufficient capacity
+            if (table == null) {
+                // required capacity estimation, with loadFactor consideration
+                float ft = ((float) s / loadFactor) + 1.0F;
+                int t = (ft < (float) MAXIMUM_CAPACITY) ? (int) ft : MAXIMUM_CAPACITY;
+                if (t > threshold) {
+                    threshold = tableSizeFor(t); // to the next power of 2
+                }
+            } else if (s > threshold && table.length < MAXIMUM_CAPACITY) {
+                // calling resize
+                resize();
+            }
+
+            // 2) insert iteration
+
+        }
+    }
+
+    /**
+     * Init / Double the table size
+     */
+    final Node<K, V>[] resize() {
+        Node<K, V>[] oldTab = table;
+        int oldCap = (oldTab == null) ? 0 : oldTab.length;
+        int oldThr = threshold;
+        int newCap, newThr = 0;
+
+        // 1) determine Capacity & Threshold
+        if (oldCap > 0) {
+            // reach maximum cap
+            if (oldCap >= MAXIMUM_CAPACITY) {
+                threshold = Integer.MAX_VALUE;
+                return oldTab;
+            }
+            // double capacity
+            newCap = oldCap << 1;
+            if (newCap < MAXIMUM_CAPACITY && oldCap >= DEFAULT_INIT_CAPACITY) {
+                newThr = oldThr << 1;
+            }
+        } else if (oldThr > 0) {
+            newCap = oldThr;
+        } else {
+            newCap = DEFAULT_INIT_CAPACITY;
+            newThr = (int) (DEFAULT_LOAD_FACTOR * DEFAULT_INIT_CAPACITY);
+        }
+
+        if (newThr == 0) {
+            newThr = calculateThreshold(newCap, loadFactor);
+        }
+
+        if (newCap <= oldCap) {
+            System.out.println("Warning: Resize resulted in non-increasing capacity");
+            threshold = Integer.MAX_VALUE;
+            return oldTab;
+        }
+
+        // 2) new table creation
+        threshold = newThr;
+        capacityBits = Integer.SIZE - Integer.numberOfLeadingZeros(newCap - 1) - 1;
+        Node<K, V>[] newTab = createTable(newCap);
+        table = newTab;
+
+        // 3) re-allocation from old-val to new-table
+        if (oldTab != null) {
+            for (int j = 0; j < oldCap; j++) {
+                Node<K, V> e;
+                if ((e = oldTab[j]) != null) {
+                    oldTab[j] = null; // GC convenience
+                    if (e.next == null) {
+                    }
+
+                }
+            }
+        }
+
     }
 
 
@@ -109,15 +207,58 @@ public class FibonacciHashMap<K, V> extends AbstractMap<K, V>
         return Math.max(1, Math.min((int) (cap * lf), MAXIMUM_CAPACITY + 1));
     }
 
+    /**
+     * Create table
+     */
+    @SuppressWarnings({"unchecked"})
+    private Node<K, V>[] createTable(int capacity) {
+        return (Node<K, V>[]) new Node[capacity];
+    }
+
+
+    // --- Helper Classes ---
+
+    // Base class for iterators
+    abstract class HashIterator {
+        Node<K, V> nxt;
+        Node<K, V> cur;
+        int expectModCnt; // fail-fast usage
+        int idx;
+
+        // construct according to FibonacciHashMap's param
+        HashIterator() {
+            expectModCnt = modCount;
+            Node<K, V>[] t = table;
+            cur = nxt = null;
+            idx = 0;
+            // advance to find the first node
+            if (t != null && size > 0) {
+
+            }
+        }
+
+        /**
+         * Scans buckets from current index, until it fins a non-null entry
+         * WARN: make sure you check the table is non-empty first
+         */
+        private void advanceToNxt() {
+            Node<K, V>[] tab = table;
+            int len = tab.length;
+            while (idx < len && (nxt = tab[idx++]) == null) {
+                // just scanning
+            }
+        }
+    }
+
 
     /**
-     * Node is the inner entry implementation
+     * Basic hash bucket node, used for chaining. Implements Map.Entry.
      */
-    static class Node<K, V> implements Map.Entry<K, V> {
-        final int hash;
+    private static class Node<K, V> implements Map.Entry<K, V> {
+        final int hash; // original key.hashCode()
         final K key;
         V value;
-        Node<K, V> next;
+        Node<K, V> next; // pointer for linked list (separate chaining)
 
         public Node(int hash, K key, V value, Node<K, V> next) {
             this.hash = hash;
@@ -137,11 +278,6 @@ public class FibonacciHashMap<K, V> extends AbstractMap<K, V>
         }
 
         @Override
-        public String toString() {
-            return key + "=" + value;
-        }
-
-        @Override
         public V setValue(V value) {
             V tmp = this.value;
             this.value = value;
@@ -151,12 +287,6 @@ public class FibonacciHashMap<K, V> extends AbstractMap<K, V>
         @Override
         public int hashCode() {
             return Objects.hashCode(key) ^ Objects.hashCode(value);
-        }
-
-
-        @Override
-        protected Object clone() throws CloneNotSupportedException {
-            return super.clone();
         }
 
         @Override
@@ -174,13 +304,12 @@ public class FibonacciHashMap<K, V> extends AbstractMap<K, V>
             // different type, must not-equal
             return false;
         }
+
+        @Override
+        public String toString() {
+            return key + "=" + value;
+        }
     }
 
-
-    @Override
-    public Set<Entry<K, V>> entrySet() {
-        new HashMap<>()
-        return Set.of();
-    }
 
 }
