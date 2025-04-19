@@ -694,17 +694,52 @@ public class FibonacciHashMap<K, V> extends AbstractMap<K, V>
     }
 
 
-    /**
-     * Computes key.hashCode and applies Fibonacci Hashing to get Index
-     */
-    final int hash(Object key) {
-        // 1) get the raw 32-bit hashCode
-        int h = (key == null) ? 0 : key.hashCode();
-        // 2) calculate product = h × A (mod 2^(32))
-        // x Golden ratio, then unsigned-right-shift, resulting in 'slot' of the array we use
-        return (h * FIBONACCI_HASH_CONSTANT) >>> (Integer.SIZE - capacityExponent);
+    // --- Overwrite for Performance & Clarification ---
+
+
+    @Override
+    public V getOrDefault(Object key, V defaultValue) {
+        Node<K, V> node = getNode(key);
+        return (node == null) ? defaultValue : node.value;
     }
 
+    @Override
+    public V putIfAbsent(K key, V value) {
+        return putVal(key, value, false);
+    }
+
+    @Override
+    public boolean remove(Object key, Object value) {
+        Node<K, V> node = getNode(key);
+        if (node != null && Objects.equals(node.value, value)) {
+            removeNode(key); // internal remove
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean replace(K key, V oldValue, V newValue) {
+        Node<K, V> e = getNode(key);
+        if (e != null && Objects.equals(e.value, oldValue)) {
+            e.value = newValue;
+            afterNodeAccess(e); // hook
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public V replace(K key, V value) {
+        Node<K, V> e = getNode(key);
+        if (e != null) {
+            V oldVal = e.value;
+            e.value = value;
+            afterNodeAccess(e); // hook
+            return oldVal;
+        }
+        return null;
+    }
 
     // --- Hooks for subclasses (like LinkedHashMap) ---
     // These are empty here but allow extension without modifying core logic.
