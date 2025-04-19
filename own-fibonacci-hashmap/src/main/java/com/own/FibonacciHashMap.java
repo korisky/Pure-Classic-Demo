@@ -55,6 +55,25 @@ public class FibonacciHashMap<K, V> extends AbstractMap<K, V>
     }
 
 
+    /* --- Hashing (CORE) --- */
+
+    /**
+     * Computes key.hashCode and applies Fibonacci Hashing to get Index
+     */
+    final int hash(Object key) {
+        // 1) get the raw 32-bit hashCode
+        int h = (key == null) ? 0 : key.hashCode();
+        // 2) figure our how many idx-bits we need, is log_2{(table.len)}
+        int currentExponent = (table == null) ? calculateExponent(DEFAULT_INIT_CAPACITY) : capacityExponent;
+        // corner case: only 1 slot, always result in idx 0
+        if (currentExponent == 0) {
+            return 0;
+        }
+        // product = h × A (mod 2^(32))
+        // x Golden ratio, then unsigned-right-shift, resulting in 'slot' of the array we use
+        return (h * FIBONACCI_HASH_CONSTANT) >>> (Integer.SIZE - currentExponent);
+    }
+
 
     /**
      * Returns power of 2 size for the given target capacity
