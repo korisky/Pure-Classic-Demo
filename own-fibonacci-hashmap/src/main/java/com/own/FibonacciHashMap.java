@@ -461,6 +461,7 @@ public class FibonacciHashMap<K, V> extends AbstractMap<K, V>
                     newTab[fibonacciIndex(p.hash, capacityExponent)] = p;
                 } else {
                     // multiple nodes on the chain
+                    // IMP: 由于我们每次都是对大小x2, 这里idx要么在原地, 要么在idx + oldCap
                     Node<K, V> loHead = null, loTail = null;
                     Node<K, V> hiHead = null, hiTail = null;
                     Node<K, V> next;
@@ -529,19 +530,8 @@ public class FibonacciHashMap<K, V> extends AbstractMap<K, V>
         return (es == null) ? (es = new EntrySet()) : es;
     }
 
-    /**
-     * Computes key.hashCode and applies Fibonacci Hashing to get Index
-     */
-    final int hash(Object key) {
-        // 1) get the raw 32-bit hashCode
-        int h = (key == null) ? 0 : key.hashCode();
-        // 2) calculate product = h × A (mod 2^(32))
-        // x Golden ratio, then unsigned-right-shift, resulting in 'slot' of the array we use
-        return (h * FIBONACCI_HASH_CONSTANT) >>> (Integer.SIZE - capacityExponent);
-    }
 
-
-    // --- Helper Classes ---
+    // --- Iterator & View Implementations ---
 
     // Base class for iterators
     abstract class HashIterator {
@@ -563,15 +553,6 @@ public class FibonacciHashMap<K, V> extends AbstractMap<K, V>
             return nxt != null;
         }
 
-        public final void remove() {
-            if (modCount != expectModCnt) {
-                throw new ConcurrentModificationException();
-            }
-            if (cur == null) {
-                throw new IllegalStateException();
-            }
-        }
-
         final Node<K, V> nextNode() {
             if (modCount != expectModCnt) {
                 throw new ConcurrentModificationException();
@@ -588,6 +569,140 @@ public class FibonacciHashMap<K, V> extends AbstractMap<K, V>
             }
             return e;
         }
+
+        public final void remove() {
+            if (modCount != expectModCnt) {
+                throw new ConcurrentModificationException();
+            }
+            Node<K, V> p = cur;
+            if (p == null) {
+                throw new IllegalStateException();
+            }
+            // removing
+            cur = null;
+            removeNode(p.key);
+            expectModCnt = modCount;
+        }
+    }
+
+    // Concrete iterator implementations
+    final class KeyIterator extends HashIterator implements Iterator<K> {
+        public final K next() {
+            return nextNode().key;
+        }
+    }
+
+    final class ValueIterator extends HashIterator implements Iterator<V> {
+        @Override
+        public V next() {
+            return nextNode().value;
+        }
+    }
+
+    final class EntryIterator extends HashIterator implements Iterator<Map.Entry<K, V>> {
+        @Override
+        public Map.Entry<K, V> next() {
+            return nextNode();
+        }
+    }
+
+    // Concrete view implementations
+    final class KeySet extends AbstractSet<K> {
+        @Override
+        public int size() {
+            return FibonacciHashMap.this.size;
+        }
+
+        @Override
+        public void clear() {
+            FibonacciHashMap.this.clear();
+        }
+
+        @Override
+        public Iterator<K> iterator() {
+            return new KeyIterator();
+        }
+
+        @Override
+        public boolean contains(Object o) {
+            return containsKey(o);
+        }
+
+        @Override
+        public boolean remove(Object o) {
+            return removeNode(keySet) != null;
+        }
+    }
+
+    final class Values extends AbstractCollection<V> {
+
+        @Override
+        public int size() {
+            return FibonacciHashMap.this.size;
+        }
+
+        @Override
+        public void clear() {
+            FibonacciHashMap.this.clear();
+        }
+
+        @Override
+        public Iterator<V> iterator() {
+            return new ValueIterator();
+        }
+
+        @Override
+        public boolean contains(Object o) {
+            return containsValue(o);
+        }
+    }
+
+    final class EntrySet extends AbstractSet<Map.Entry<K, V>> {
+
+        @Override
+        public int size() {
+            return FibonacciHashMap.this.size;
+        }
+
+        @Override
+        public void clear() {
+            FibonacciHashMap.this.clear();
+        }
+
+        @Override
+        public Iterator<Entry<K, V>> iterator() {
+            return new EntryIterator();
+        }
+
+        @Override
+        public boolean contains(Object o) {
+            if (!(o instanceof Map.Entry<?, ?> e)) {
+                return false;
+            }
+            Node<K, V> candidate = getNode(e.getKey());
+            return candidate != null && candidate.equals(o); // equals -> check both Key & Value
+        }
+
+
+        @Override
+        public boolean remove(Object o) {
+            if (o instanceof Map.Entry<?, ?> e) {
+                return FibonacciHashMap.this.remove(e.getKey(), e.getValue());
+            }
+            return false;
+        }
+    }
+
+
+    /**
+     * Computes key.hashCode and applies Fibonacci Hashing to get Index
+     */
+    final int hash(Object key) {
+        // 1) get the raw 32-bit hashCode
+        int h = (key == null) ? 0 : key.hashCode();
+        // 2) calculate product = h × A (mod 2^(32))
+        // x Golden ratio, then unsigned-right-shift, resulting in 'slot' of the array we use
+        return (h * FIBONACCI_HASH_CONSTANT) >>> (Integer.SIZE - capacityExponent);
     }
 
 
