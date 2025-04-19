@@ -1,6 +1,5 @@
 package com.own;
 
-import javax.naming.SizeLimitExceededException;
 import java.io.Serializable;
 import java.util.*;
 
@@ -61,8 +60,7 @@ public class FibonacciHashMap<K, V> extends AbstractMap<K, V>
                 return true;
             }
             // check same type-reference or not
-            if (obj instanceof Map.Entry) {
-                Map.Entry<?, ?> e = (Entry<?, ?>) obj;
+            if (obj instanceof Entry<?, ?> e) {
                 // for comparing-with-null safety
                 return Objects.equals(key, e.getKey())
                         && Objects.equals(value, e.getValue());
@@ -296,7 +294,7 @@ public class FibonacciHashMap<K, V> extends AbstractMap<K, V>
     @Override
     public boolean containsValue(Object value) {
         if (table != null && size > 0) {
-            // TODO traversing the whole map (might could be enhanced with extra SET / MAP)
+            // TODO traversing the whole map (might could be enhanced with extra Set / Map)
             for (Node<K, V> kvNode : table) {
                 Node<K, V> n = kvNode;
                 while (n != null) {
@@ -587,7 +585,7 @@ public class FibonacciHashMap<K, V> extends AbstractMap<K, V>
 
     // Concrete iterator implementations
     final class KeyIterator extends HashIterator implements Iterator<K> {
-        public final K next() {
+        public K next() {
             return nextNode().key;
         }
     }
@@ -752,5 +750,19 @@ public class FibonacciHashMap<K, V> extends AbstractMap<K, V>
     void afterNodeRemoval(Node<K, V> p) {
     }
 
-
+    @Override
+    @SuppressWarnings("unchecked")
+    protected Object clone() throws CloneNotSupportedException {
+        FibonacciHashMap<K, V> result = (FibonacciHashMap<K, V>) super.clone();
+        // reset fields that should not be shared
+        result.table = null;
+        result.entrySet = null;
+        result.keySet = null;
+        result.values = null;
+        result.modCount = 0;
+        result.size = 0;
+        // internal state -> copy entries
+        result.putMapEntries(this, false);
+        return result;
+    }
 }
