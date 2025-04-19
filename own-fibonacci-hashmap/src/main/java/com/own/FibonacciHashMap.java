@@ -270,6 +270,150 @@ public class FibonacciHashMap<K, V> extends AbstractMap<K, V>
     }
 
 
+    // --- Core Map Functions ---
+    @Override
+    public int size() {
+        return size;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+    @Override
+    public V get(Object key) {
+        Node<K, V> node = getNode(key);
+        return (node == null) ? null : node.value;
+    }
+
+    @Override
+    public boolean containsKey(Object key) {
+        return getNode(key) != null;
+    }
+
+    @Override
+    public boolean containsValue(Object value) {
+        if (table != null && size > 0) {
+            // TODO traversing the whole map (might could be enhanced with extra SET / MAP)
+            for (Node<K, V> kvNode : table) {
+                Node<K, V> n = kvNode;
+                while (n != null) {
+                    if (Objects.equals(n.value, value)) {
+                        return true;
+                    }
+                    n = n.next;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public V put(K key, V value) {
+        return putVal(key, value, true);
+    }
+
+    final V putVal(K key, V value, boolean allowOverwrite) {
+        int kh = keyHash(key);
+
+        if (table == null || table.length == 0) {
+            table = resize();
+        }
+
+        int i = fibonacciIndex(kh, capacityExponent);
+        Node<K, V> p = table[i];
+
+        // insertion logic
+        if (p == null) {
+            // empty bucket
+            table[i] = newNode(kh, key, value, null);
+        } else {
+            // add new node on chain
+            Node<K, V> existingNode = null;
+            if (p.hash == kh && Objects.equals(p.key, key)) {
+                existingNode = p;
+            } else {
+                Node<K, V> e = p.next;
+                while (e != null) {
+                    if (e.hash == kh && Objects.equals(e.key, key)) {
+                        existingNode = e;
+                        break;
+                    }
+                    e = e.next;
+                }
+            }
+            // if key already exist, update value
+            if (existingNode != null) {
+                V oldVal = existingNode.value;
+                if (allowOverwrite || oldVal == null) {
+                    existingNode.value = value;
+                }
+                afterNodeAccess(existingNode); // hook
+                return oldVal;
+            }
+            // not exist, insertion node to head, point next to current head
+            table[i] = newNode(kh, key, value, p);
+        }
+
+        // after insertion logic
+        modCount++;
+        size++;
+        if (size > threshold && table.length < MAXIMUM_CAPACITY) {
+            resize();
+        }
+        afterNodeInsertion(table[i]); // hook
+        return null; // no previous value
+    }
+
+    @Override
+    public V remove(Object key) {
+        Node<K, V> e = removeNode(key);
+        return (e == null) ? null : e.value;
+    }
+
+    @Override
+    public void clear() {
+        modCount++;
+        if (table != null && size > 0) {
+            size = 0;
+            Arrays.fill(table, null); // totally removal
+        }
+    }
+
+    @Override
+    public void putAll(Map<? extends K, ? extends V> m) {
+        putMapEntries(m, true);
+    }
+
+    final void putMapEntries(Map<? extends K, ? extends V> m, boolean evict) {
+        int s = m.size();
+        if (s <= 0) {
+            return;
+        }
+        // 1) ensure table initialized
+        if (table == null) {
+            // calculate capacity base on size & loadFactor
+            float ft = ((float) s / loadFactor) + 1.0F;
+            int t = (ft < (float) MAXIMUM_CAPACITY) ? (int) ft : MAXIMUM_CAPACITY;
+            // smallest power of 2 >= t
+            int newCap = tableSizeFor(t);
+            this.capacityExponent = calculateExponent(newCap);
+            this.threshold = calculateThreshold(newCap, loadFactor);
+        } else if (s + size > threshold && table.length < MAXIMUM_CAPACITY) {
+            // resize existing table if exceed threshold
+            resize()
+        }
+        // 2) add entries from map
+        for (Entry<? extends K, ? extends V> entry : m.entrySet()) {
+            K key = entry.getKey();
+            V value = entry.getValue();
+            // putVal, and allow overwrite
+            putVal(key, value, true);
+        }
+    }
+
+
     /**
      * Computes key.hashCode and applies Fibonacci Hashing to get Index
      */
@@ -329,11 +473,6 @@ public class FibonacciHashMap<K, V> extends AbstractMap<K, V>
             }
             return e;
         }
-    }
-
-
-    final void putMapEntries(Map<? extends K, ? extends V> m, boolean evict) {
-        // TODO
     }
 
 
