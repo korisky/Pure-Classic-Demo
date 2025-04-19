@@ -190,8 +190,83 @@ public class FibonacciHashMap<K, V> extends AbstractMap<K, V>
 
 
     // --- Internal Node/Entry Helpers
-    final Node<K, V> getNode(Object key) {
 
+    /**
+     * Get(find) a node by key
+     */
+    final Node<K, V> getNode(Object key) {
+        Node<K, V>[] tab = table;
+        Node<K, V> firstNode;
+        int kh = keyHash(key);
+        // check table existence
+        if (tab != null && tab.length > 0
+                && (firstNode = tab[fibonacciIndex(kh, capacityExponent)]) != null) {
+            // 1. check first node in bucket
+            if (firstNode.hash == kh && Objects.equals(firstNode.key, key)) {
+                return firstNode;
+            }
+            // 2. check subsequent nodes in the chain
+            Node<K, V> p = firstNode.next;
+            while (p != null) {
+                if (p.hash == kh && Objects.equals(p.key, key)) {
+                    return p;
+                }
+                p = p.next;
+            }
+        }
+        return null; // not found
+    }
+
+    /**
+     * New node
+     */
+    final Node<K, V> newNode(int hash, K key, V value, Node<K, V> next) {
+        return new Node<>(hash, key, value, next);
+    }
+
+    /**
+     * Remove node, return node if found
+     */
+    final Node<K, V> removeNode(Object key) {
+        Node<K, V>[] tab = table;
+        Node<K, V> p;
+        int index, kh = keyHash(key);
+
+        if (tab != null && tab.length > 0 &&
+                (p = tab[index = fibonacciIndex(kh, capacityExponent)]) != null) {
+            // 1. try to find the node
+            Node<K, V> nodeToRemove = null;
+            Node<K, V> prev = null;
+            if (p.hash == kh && Objects.equals(p.key, key)) {
+                // if the head matches
+                nodeToRemove = p;
+            } else {
+                // search rest of the chain
+                prev = p;
+                Node<K, V> iter = p.next;
+                while (iter != null) {
+                    if (iter.hash == kh && Objects.equals(iter.key, key)) {
+                        // found, break
+                        nodeToRemove = iter;
+                        break;
+                    }
+                    iter = iter.next;
+                }
+            }
+            // 2. remove the node if found
+            if (nodeToRemove != null) {
+                if (prev == null) {
+                    tab[index] = nodeToRemove.next;
+                } else {
+                    prev.next = nodeToRemove.next;
+                }
+                modCount++;
+                size--;
+                afterNodeRemoval(nodeToRemove); // hook for removal
+                return nodeToRemove;
+            }
+        }
+        return null; // key not found
     }
 
 
@@ -259,6 +334,18 @@ public class FibonacciHashMap<K, V> extends AbstractMap<K, V>
 
     final void putMapEntries(Map<? extends K, ? extends V> m, boolean evict) {
         // TODO
+    }
+
+
+    // --- Hooks for subclasses (like LinkedHashMap) ---
+    // These are empty here but allow extension without modifying core logic.
+    void afterNodeAccess(Node<K, V> p) {
+    }
+
+    void afterNodeInsertion(Node<K, V> p) {
+    }
+
+    void afterNodeRemoval(Node<K, V> p) {
     }
 
 
