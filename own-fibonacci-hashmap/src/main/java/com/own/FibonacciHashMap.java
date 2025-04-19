@@ -502,6 +502,33 @@ public class FibonacciHashMap<K, V> extends AbstractMap<K, V>
     }
 
 
+    // --- View Functions ---
+    @Override
+    public Set<K> keySet() {
+        Set<K> ks = keySet; // cached view
+        if (ks == null) {
+            ks = new KeySet();
+            keySet = ks;
+        }
+        return ks;
+    }
+
+    @Override
+    public Collection<V> values() {
+        Collection<V> vs = values;// cached view
+        if (vs == null) {
+            vs = new Values();
+            values = vs;
+        }
+        return vs;
+    }
+
+    @Override
+    public Set<Entry<K, V>> entrySet() {
+        Set<Entry<K, V>> es = entrySet;
+        return (es == null) ? (es = new EntrySet()) : es;
+    }
+
     /**
      * Computes key.hashCode and applies Fibonacci Hashing to get Index
      */
