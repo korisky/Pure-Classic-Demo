@@ -18,8 +18,9 @@ public class FibonacciHashMap<K, V> extends AbstractMap<K, V>
 
     /**
      * Basic hash bucket node, used for chaining. Implements Map.Entry.
+     * Static in case external need access
      */
-    private static class Node<K, V> implements Map.Entry<K, V> {
+    static class Node<K, V> implements Map.Entry<K, V> {
         final int hash; // original key.hashCode()
         final K key;
         V value;
@@ -454,6 +455,12 @@ public class FibonacciHashMap<K, V> extends AbstractMap<K, V>
         if (oldTab != null) {
             for (int j = 0; j < oldCap; j++) {
                 Node<K, V> p = oldTab[j];
+                // empty bucket -> skip
+                if (p == null) {
+                    continue;
+                }
+                // non-empty bucket -> logic checking
+                oldTab[j] = null; // help gc
                 if (p.next == null) {
                     // single node new-table-tapping
                     newTab[fibonacciIndex(p.hash, capacityExponent)] = p;
