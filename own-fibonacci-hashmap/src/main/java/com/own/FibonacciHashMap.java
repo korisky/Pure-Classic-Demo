@@ -180,14 +180,6 @@ public class FibonacciHashMap<K, V> extends AbstractMap<K, V>
         return Math.max(1, Math.min((int) (cap * lf), MAXIMUM_CAPACITY + 1));
     }
 
-    /**
-     * Create table
-     */
-    @SuppressWarnings({"unchecked"})
-    private Node<K, V>[] createTable(int capacity) {
-        return (Node<K, V>[]) new Node[capacity];
-    }
-
 
     // --- Internal Node/Entry Helpers
 
@@ -425,12 +417,14 @@ public class FibonacciHashMap<K, V> extends AbstractMap<K, V>
             // already contains value
             if (oldCap >= MAXIMUM_CAPACITY) {
                 threshold = Integer.MAX_VALUE;
-                throw new RuntimeException("Exceed maximum capacity, resize failed");
+                return oldTab;
             }
             // double capacity (and threshold, if meet)
             newCap = oldCap << 1;
             if (newCap < MAXIMUM_CAPACITY && oldCap >= DEFAULT_INIT_CAPACITY) {
-                newThr = oldThr << 1;
+                // double it only if it doesn't overflow
+                int doubledThr = oldThr << 1;
+                newThr = (doubledThr > 0) ? doubledThr : Integer.MAX_VALUE;
             }
         } else if (oldThr > 0) {
             // not value, but with threshold
@@ -441,67 +435,76 @@ public class FibonacciHashMap<K, V> extends AbstractMap<K, V>
             newThr = (int) (DEFAULT_LOAD_FACTOR * newCap);
         }
 
-        // if threshold wasn't doubled, calculate according to newCap
+        // calculate threshold if not already set
         if (newThr == 0) {
-            newThr = calculateThreshold(newCap, loadFactor);
+            float ft = (float) newCap * loadFactor;
+            newThr = (newCap < MAXIMUM_CAPACITY && ft < (float) MAXIMUM_CAPACITY)
+                    ? (int) ft
+                    : Integer.MAX_VALUE;
+//            newThr = calculateThreshold(newCap, loadFactor);
         }
+
         // update reference
         threshold = newThr;
         capacityExponent = calculateExponent(newCap);
-        Node<K, V>[] newTab = createTable(newCap);
+        @SuppressWarnings("{unchecked}")
+        Node<K, V>[] newTab = (Node<K, V>[]) new Node[newCap];
         table = newTab;
 
         // transfer nodes
         if (oldTab != null) {
             for (int j = 0; j < oldCap; j++) {
                 Node<K, V> p = oldTab[j];
-                // empty bucket -> skip
-                if (p == null) {
-                    continue;
-                }
-                // non-empty bucket -> logic checking
-                oldTab[j] = null; // help gc
-                if (p.next == null) {
-                    // single node new-table-tapping
-                    newTab[fibonacciIndex(p.hash, capacityExponent)] = p;
-                } else {
-                    // multiple nodes on the chain
-                    // IMP: 由于我们每次都是对大小x2, 这里idx要么在原地, 要么在idx + oldCap
-                    Node<K, V> loHead = null, loTail = null;
-                    Node<K, V> hiHead = null, hiTail = null;
-                    Node<K, V> next;
-                    // first old-chain to multiple new-chains
-                    do {
-                        next = p.next;
-                        if ((p.hash & oldCap) == 0) {
-                            // stays same index
-                            if (loTail == null) {
-                                loHead = p;
+                // only care non-empty bucket
+                if (p != null) {
+                    oldTab[j] = null; // help gc
+
+                    // TODO
+
+
+                    if (p.next == null) {
+                        // single node new-table-tapping
+                        newTab[fibonacciIndex(p.hash, capacityExponent)] = p;
+                    } else {
+                        // multiple nodes on the chain
+                        // IMP: 由于我们每次都是对大小x2, 这里idx要么在原地, 要么在idx + oldCap
+                        Node<K, V> loHead = null, loTail = null;
+                        Node<K, V> hiHead = null, hiTail = null;
+                        Node<K, V> next;
+                        // first old-chain to multiple new-chains
+                        do {
+                            next = p.next;
+                            if ((p.hash & oldCap) == 0) {
+                                // stays same index
+                                if (loTail == null) {
+                                    loHead = p;
+                                } else {
+                                    loTail.next = p;
+                                }
+                                loTail = p;
                             } else {
-                                loTail.next = p;
+                                // moves to another index
+                                if (hiTail == null) {
+                                    hiHead = p;
+                                } else {
+                                    hiTail.next = p;
+                                }
+                                hiTail = p;
                             }
-                            loTail = p;
-                        } else {
-                            // moves to another index
-                            if (hiTail == null) {
-                                hiHead = p;
-                            } else {
-                                hiTail.next = p;
-                            }
-                            hiTail = p;
+                        } while ((p = next) != null);
+                        // link new low chain to new table at idx j
+                        if (loTail != null) {
+                            loTail.next = null;
+                            newTab[j] = loHead;
                         }
-                    } while ((p = next) != null);
-                    // link new low chain to new table at idx j
-                    if (loTail != null) {
-                        loTail.next = null;
-                        newTab[j] = loHead;
-                    }
-                    // link new high chain to new table at idx j
-                    if (hiTail != null) {
-                        hiTail.next = null;
-                        newTab[j + oldCap] = hiHead;
+                        // link new high chain to new table at idx j
+                        if (hiTail != null) {
+                            hiTail.next = null;
+                            newTab[j + oldCap] = hiHead;
+                        }
                     }
                 }
+
             }
         }
         return newTab;
