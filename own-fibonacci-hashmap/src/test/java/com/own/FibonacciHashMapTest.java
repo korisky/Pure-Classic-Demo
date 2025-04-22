@@ -10,7 +10,7 @@ import static org.junit.Assert.assertTrue;
 public class FibonacciHashMapTest {
 
     @Test
-    public void mainFuncTest() {
+    public void mainFuncTest() throws InterruptedException {
 
         FibonacciHashMap<Object, Object> map = new FibonacciHashMap<>(4, 0.75f);
         map.put("One", 1);
@@ -36,5 +36,7 @@ public class FibonacciHashMapTest {
         for (Map.Entry<Object, Object> entry : map.entrySet) {
             System.out.println("Key: " + entry.getKey() + ", Val: " + entry.getValue());
         }
+
+        Thread.sleep(100000000);
     }
 }
