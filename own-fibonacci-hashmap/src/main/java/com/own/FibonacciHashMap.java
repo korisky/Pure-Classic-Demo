@@ -458,53 +458,16 @@ public class FibonacciHashMap<K, V> extends AbstractMap<K, V>
                 // only care non-empty bucket
                 if (p != null) {
                     oldTab[j] = null; // help gc
-
-                    // TODO
-
-
-                    if (p.next == null) {
-                        // single node new-table-tapping
-                        newTab[fibonacciIndex(p.hash, capacityExponent)] = p;
-                    } else {
-                        // multiple nodes on the chain
-                        // IMP: 由于我们每次都是对大小x2, 这里idx要么在原地, 要么在idx + oldCap
-                        Node<K, V> loHead = null, loTail = null;
-                        Node<K, V> hiHead = null, hiTail = null;
-                        Node<K, V> next;
-                        // first old-chain to multiple new-chains
-                        do {
-                            next = p.next;
-                            if ((p.hash & oldCap) == 0) {
-                                // stays same index
-                                if (loTail == null) {
-                                    loHead = p;
-                                } else {
-                                    loTail.next = p;
-                                }
-                                loTail = p;
-                            } else {
-                                // moves to another index
-                                if (hiTail == null) {
-                                    hiHead = p;
-                                } else {
-                                    hiTail.next = p;
-                                }
-                                hiTail = p;
-                            }
-                        } while ((p = next) != null);
-                        // link new low chain to new table at idx j
-                        if (loTail != null) {
-                            loTail.next = null;
-                            newTab[j] = loHead;
-                        }
-                        // link new high chain to new table at idx j
-                        if (hiTail != null) {
-                            hiTail.next = null;
-                            newTab[j + oldCap] = hiHead;
-                        }
-                    }
+                    // iterate through the old-bucket
+                    do {
+                        Node<K, V> next = p.next;
+                        int i = fibonacciIndex(p.hash, capacityExponent);
+                        // prepend node to the bucket
+                        p.next = newTab[i];
+                        newTab[i] = p;
+                        p = next;
+                    } while (p != null);
                 }
-
             }
         }
         return newTab;
