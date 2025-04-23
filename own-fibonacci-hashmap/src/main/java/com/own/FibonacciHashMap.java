@@ -173,11 +173,15 @@ public class FibonacciHashMap<K, V> extends AbstractMap<K, V>
      * Calculate threshold, with overflow prevention
      */
     private int calculateThreshold(int cap, float lf) {
+        if (cap <= 0) {
+            return 0;
+        }
         if (cap >= MAXIMUM_CAPACITY) {
             return Integer.MAX_VALUE;
         }
+        float ft = (float) cap * lf;
         // ensure threshold is at least 1, if needed threshold overflow
-        return Math.max(1, Math.min((int) (cap * lf), MAXIMUM_CAPACITY + 1));
+        return (ft < MAXIMUM_CAPACITY) ? Math.max(1, (int) ft) : Integer.MAX_VALUE;
     }
 
 
