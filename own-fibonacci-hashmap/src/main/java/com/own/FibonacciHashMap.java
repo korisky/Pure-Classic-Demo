@@ -601,7 +601,7 @@ public class FibonacciHashMap<K, V> extends AbstractMap<K, V>
 
         @Override
         public boolean remove(Object o) {
-            return removeNode(keySet) != null;
+            return removeNode(o) != null;
         }
     }
 
